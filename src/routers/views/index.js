@@ -1,6 +1,7 @@
 import { Router } from 'express';
 const router = Router();
 import ProductoModel from '../../models/product.models.js';
+import CarritoModel from '../../models/carrito.model.js';
 import  { authMiddleware, authRolesMiddleware } from '../../utils.js'
 
 
@@ -13,13 +14,22 @@ router.get('/', async (req, res) => {
 
         const users = await  ProductoModel.find({});
     
-        res.render('menuPrincipal', { listProducts: users.map(user => user.toJSON()), title: 'Lista de productos' })
+        res.render('menuPrincipal', { listProducts: users.map(user => user.toJSON()), title: 'Despesa Onelú' })
       } catch (error) {
         next(error);
       }
  
     
-    
+});
+
+router.get('/carrito', async (req, res, next) => {
+  try {
+    const productos = await CarritoModel.find({}); 
+    console.log('productos del carrito servidor',productos)
+    res.json(productos);
+  } catch (error) {
+    next(error);
+  }
 });
 
 

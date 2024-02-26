@@ -260,6 +260,7 @@ header {
     gap: 10px;
     align-items: flex-start;
     justify-content: space-between;
+    
 }
 
 .price{
@@ -267,7 +268,7 @@ header {
     font-weight: 900;
 }
 
-.info-product button{
+.btn-add-cart{
   
     border: none;
     background: none;
@@ -277,6 +278,9 @@ header {
     cursor: pointer;
     width: 100%;
     border-radius: 15px;
+    opacity: 100%;
+    cursor: no-drop;
+    transition: 0.3s ease;
 }
 
 h2{
@@ -338,3 +342,19 @@ h2{
     cursor: pointer
 
 }
+
+.buttonEnable{
+    opacity: 100%;
+    cursor: pointer;
+    background-color: #3fb849
+}
+
+.ceroOpacity{
+    opacity: 0%;
+}
+
+/* =================================================================================== */
+
+
+
+

@@ -1,32 +1,66 @@
 import { Router } from 'express';
 import ProductoModel from '../../models/product.models.js';
+import CarritoModel from '../../models/carrito.model.js';
 import { v4 as uuidv4 } from 'uuid'
-import  { authMiddleware, authRolesMiddleware } from '../../utils.js'
+import { authMiddleware, authRolesMiddleware } from '../../utils.js'
 
 const router = Router();
 
 
 
-// router.post('/create', async (req, res, next) => {
-//   try {
-//     const { body } = req;
-//     console.log(body)
+router.post('/carritoFind', async (req, res, next) => {
+    try {
+        const { allProducts } = req.body;
+      
 
-//     const newUser= {
-//       ...body,
-//       userId:uuidv4(),
-//     }
-//     const user = await UsuarioModel.create(newUser);
-//     res.redirect('/create')
-//   } catch (error) {
-//     next(error);
-//   }
-// });
+        let carritoCompras = {}
+
+        allProducts.forEach(e => {
+            carritoCompras = e
+        });
+        console.log('El carrito de compras es', carritoCompras)
+
+        const newCarrito = {
+            ...carritoCompras,
+            userId: uuidv4(),
+        }
+        
+        console.log('NewCarrito es:  ',newCarrito)
+
+        let criterioDeBusqueda ={
+            title:newCarrito.title
+        }
+        
+        //? "Si encuentra en carrito de la DB un producto con el mismo titulo.. guardarlo en un array"
+        const productosEncontrados = await CarritoModel.find(criterioDeBusqueda)
+
+
+       
+        
+        //?Si la longitud de ese array es igual a cero.. crear nuevo producto en la DB
+        if(productosEncontrados.length === 0){
+            const user = await CarritoModel.create(newCarrito);
+        }
+        //? Sino actualizar el producto existente por el nuevo
+        else{
+
+            newCarrito.price=(productosEncontrados[0].price+newCarrito.price)
+            newCarrito.quantity=(productosEncontrados[0].quantity+newCarrito.quantity)
+
+            const update = await CarritoModel.updateOne(criterioDeBusqueda, newCarrito)
+        }
+
+        
+
+    } catch (error) {
+        next(error);
+    }
+});
 
 
 
 // router.post('/getUserByLastName', async (req, res, next) => {
-  
+
 //   try {
 
 //     const { last_name } = req.body;
