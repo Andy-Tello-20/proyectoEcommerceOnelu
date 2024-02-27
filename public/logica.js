@@ -33,7 +33,7 @@ productsList.addEventListener('click', e => {
     //? Si hago click en un dentro de productsLists (que es igual al contenedor 'container-items') sobre algo con una clase btn-add-cart...
     if (e.target.classList.contains('btn-add-cart')) {
 
-
+   
 
         //?...product será igual al contenedor que esta conteniendo al boton 'btn-add-cart', es decir al contenedor "info-products" 
         const product = e.target.parentElement;
@@ -95,7 +95,7 @@ productsList.addEventListener('click', e => {
 
             //! envio al servidor 
             function enviarDatos() {
-                const url = '/api/carritoFind';
+                const url = '/api/tuCarrito';
 
                 fetch(url, {
                     method: 'POST',

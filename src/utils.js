@@ -25,15 +25,11 @@ export const JWT_SECRET = 'bEub7U!LK{F£rhmzXk!D8861W;Y@=2HC'
 
 //? Generador de token
 
-export const generateToken = (user) => {
+export const generateToken = (uuid) => {
     const payload = {
-        id: user._id,
-        first_name: user.first_name,
-        last_name: user.last_name,
-        email: user.email,
-        role:user.role
+        UUID: uuid
     };
-    return JWT.sign(payload, JWT_SECRET, { expiresIn: '1m' });
+    return JWT.sign(payload, JWT_SECRET, { expiresIn: '5m' });
 };
 
 
@@ -49,7 +45,7 @@ export const authMiddleware = (strategy) => (req, res, next) => {
 
       if (!payload) {
     
-        return res.status(401).render('msjSesionExp')
+        // return res.status(401).render('msjSesionExp')
         
       }
       req.user = payload;

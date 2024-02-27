@@ -2,61 +2,55 @@ import { Router } from 'express';
 const router = Router();
 import ProductoModel from '../../models/product.models.js';
 import CarritoModel from '../../models/carrito.model.js';
-import  { authMiddleware, authRolesMiddleware } from '../../utils.js'
+import NewcarritoModel from '../../models/nuevoCarrito.model.js';
+import { generateToken } from '../../utils.js';
+import { v4 as uuidv4 } from 'uuid'
+// import { authMiddleware, authRolesMiddleware } from '../../utils.js'
 
-
-
-
-router.get('/', async (req, res) => {
-
+router.get('/', (req, res) => {
     
-    try {
+});
 
-        const users = await  ProductoModel.find({});
+router.get('/inicio', async (req, res) => {
+
+
+
+
+  try {
     
-        res.render('menuPrincipal', { listProducts: users.map(user => user.toJSON()), title: 'Despesa Onelú' })
-      } catch (error) {
-        next(error);
-      }
- 
-    
+    const UUID = uuidv4()
+    const token = generateToken(UUID);
+      
+    res.cookie('token', token, {
+      //? 1000 * 30 = 5min
+        maxAge: 1000 * 300,
+        httpOnly: true,
+    })
+   
+
+    const users = await ProductoModel.find({});
+
+    res.render('menuPrincipal', { listProducts: users.map(user => user.toJSON()), title: 'Despesa Onelú' })
+  } catch (error) {
+    next(error);
+  }
+
+
 });
 
 router.get('/carrito', async (req, res, next) => {
   try {
-    const productos = await CarritoModel.find({}); 
-    console.log('productos del carrito servidor',productos)
-    res.json(productos);
+
+    console.log("hola")
+    const productos = await CarritoModel.find({});
+    console.log('productos del carrito servidor', productos)
+
+    res.render('carritoCompras')
   } catch (error) {
     next(error);
   }
 });
 
-
-
-// router.get('/register', (req, res) => {
-//     res.render('register', { title: 'Hello People 🖐️' });
-// });
-
-// router.get('/login', (req, res) => {
-//     res.render('login', { title: 'Hello People 🖐️' });
-// });
-
-// router.get('/create',authMiddleware('jwt'), authRolesMiddleware('admin'), (req, res) => {
-//     res.render('create', { title: 'Hello People 🖐️' });
-// });
-
-// router.get('/getUser',authMiddleware('jwt'), authRolesMiddleware('admin'), (req, res) => {
-//     res.render('getUser', { title: 'Hello People 🖐️' });
-// });
-
-// router.get('/UserByLastName',authMiddleware('jwt'), authRolesMiddleware('admin'),(req, res) => {
-//     res.render('getUserByLastName', { title: 'Hello People 🖐️' });
-// });
-
-// router.get('/updateUserIndex',authMiddleware('jwt'), authRolesMiddleware('admin'), (req, res) => {
-//     res.render('searchUser', { title: 'Hello People 🖐️' });
-// });
 
 export default router;
 
