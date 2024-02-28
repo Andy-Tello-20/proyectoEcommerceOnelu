@@ -23,7 +23,7 @@ router.get('/inicio', async (req, res) => {
       
     res.cookie('token', token, {
       //? 1000 * 30 = 5min
-        maxAge: 1000 * 300,
+        maxAge: 1000 * 60 * 10,
         httpOnly: true,
     })
    

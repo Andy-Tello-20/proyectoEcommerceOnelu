@@ -26,7 +26,7 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         const newCarrito = {
             ...carritoCompras,
         }
-        // console.log('newCarrito es :', newCarrito)
+        console.log('newCarrito es :', newCarrito)
 
         const copiaNewCarrito = [newCarrito]
         // console.log('copiaNewCarrito es :', copiaNewCarrito)
@@ -36,38 +36,53 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
         const busquedaConexion = await NewcarritoModel.find({ UUID: uuidSearch })
 
-        console.log('busquedaConexion es: ', busquedaConexion[0])
+        console.log('busquedaConexion es: ', busquedaConexion[0], 'y tiene elementos = a', busquedaConexion.length)
 
 
-        if (busquedaConexion.length !== 0) {
+        if (busquedaConexion.length > 0) {
 
-            // //?Si hay algun elemento/producto con titulo en la database, igual al titulo del producto que obtengo de la peticion...
+
+            //? se actualizara ESE producto del especifico
             const array = busquedaConexion[0].carrito.map((i) => {
 
-                console.log('title es: ', i.title)
 
+                // //?Si hay algun elemento/producto con titulo en la database, igual al titulo del producto que obtengo de la peticion...
                 if (i.title === newCarrito.title) {
                     i.price = i.price + newCarrito.price;
                     i.quantity = i.quantity + newCarrito.quantity;
                     console.log('i es:', i);
 
                     return i
+                }else{
+                    return i
                 }
-            })
-            if (array.length !== 0) {
-
-
-                busquedaConexion[0].carrito = [...array]
-                await busquedaConexion[0].save()
-
-
-            } else {
-                //? Si no hay documentos que cumplan con la condición, crear un nuevo documento
-
-                busquedaConexion[0].carrito.push(newCarrito)
-                await busquedaConexion.save()
-
             }
+            )
+
+            busquedaConexion[0].carrito = [...array]
+
+            let otherArray =  busquedaConexion[0].carrito
+
+            console.log('otherArray es: ',otherArray)
+            
+            let otherArray2= otherArray.some(item => item.title === newCarrito.title)
+
+            console.log('otherArray2 es: ',otherArray2)
+            console.log('newCarrito es: ',newCarrito)
+
+            if (!otherArray2) {
+                otherArray.push(newCarrito);
+                busquedaConexion[0].carrito = [...otherArray]
+            }
+
+
+            const actualizarProducto = async () => {
+                console.log('busquedaConexion[0].carrito es:', busquedaConexion[0].carrito)
+                await busquedaConexion[0].save()
+            }
+
+            actualizarProducto()
+
         }
 
 

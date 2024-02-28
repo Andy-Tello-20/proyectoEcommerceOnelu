@@ -29,7 +29,7 @@ export const generateToken = (uuid) => {
     const payload = {
         UUID: uuid
     };
-    return JWT.sign(payload, JWT_SECRET, { expiresIn: '5m' });
+    return JWT.sign(payload, JWT_SECRET, { expiresIn: '10m' });
 };
 
 
