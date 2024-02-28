@@ -58,9 +58,6 @@ export const authMiddleware = (strategy) => (req, res, next) => {
         httpOnly: true,
       })
       req.user = UUID
-      // return res.redirect('http://localhost:8080/inicio')
-
-      // return res.status(401).json('Sesion Expirada O carrito vacio')
 
     } else if (payload) {
       req.user = payload;

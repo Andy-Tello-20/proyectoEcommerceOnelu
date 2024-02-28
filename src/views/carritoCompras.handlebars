@@ -1,0 +1,22 @@
+<div class="contenedor-carrito">
+    {{#each listcarrito}}
+    <div id="carrito-productos" class="carrito-productos">
+        <div class="carrito-producto">
+            <img class="carrito-producto-imagen" src="{{img}}" alt="{{title}}">
+            <div class="carrito-producto-titulo">
+                <small>Título</small>
+                <h3>{{title}}</h3>
+            </div>
+            <div class="carrito-producto-cantidad">
+                <small>Cantidad</small>
+                <p>{{quantity}}</p>
+            </div>
+            <div class="carrito-producto-precio">
+                <small>Precio</small>
+                <p>{{price}}</p>
+            </div>
+            <button class="carrito-producto-eliminar" id="abrigo-01"><i class="bi bi-trash-fill"></i></button>
+        </div>
+    </div>
+    {{/each}}
+</div>
