@@ -9,9 +9,9 @@ const cookieExtractor = (req) => {
   if (req && req.cookies) {
     
     token = req.cookies.token;
-
+    console.log('el token es', token)
   }
-
+  
   return token;
 }
 
@@ -23,7 +23,7 @@ export const init = () => {
   };
   passport.use('jwt', new JWTStrategy(jwtOptions, (payload, done) => {
 
-
+    console.log('el payload de la estrategia jwt es: ' ,payload)
     return done(null, payload);
   }));
 }

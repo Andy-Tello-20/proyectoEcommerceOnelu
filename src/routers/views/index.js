@@ -5,28 +5,32 @@ import CarritoModel from '../../models/carrito.model.js';
 import NewcarritoModel from '../../models/nuevoCarrito.model.js';
 import { generateToken } from '../../utils.js';
 import { v4 as uuidv4 } from 'uuid'
-// import { authMiddleware, authRolesMiddleware } from '../../utils.js'
+import { authMiddleware } from '../../utils.js'
 
 router.get('/', (req, res) => {
-    
+
 });
 
-router.get('/inicio', async (req, res) => {
+router.get('/inicio', authMiddleware('jwt'), async (req, res) => {
 
-
-
-
+//? Si el req.user existe
   try {
-    
-    const UUID = uuidv4()
-    const token = generateToken(UUID);
-      
-    res.cookie('token', token, {
-      //? 1000 * 30 = 5min
-        maxAge: 1000 * 60 * 10,
-        httpOnly: true,
-    })
+
    
+
+
+    // const UUID = uuidv4()
+    // const token = generateToken(UUID);
+    // const minutosCoekie= 10
+
+
+    // res.cookie('token', token, {
+    //   //? 1000 * 30 = 5min
+
+    //   maxAge: 1000 * 60 * minutosCoekie,
+    //   httpOnly: true,
+    // })
+
 
     const users = await ProductoModel.find({});
 
@@ -38,14 +42,15 @@ router.get('/inicio', async (req, res) => {
 
 });
 
-router.get('/carrito', async (req, res, next) => {
+router.get('/carrito', authMiddleware('jwt'), async (req, res, next) => {
   try {
+    const uuidSearch = req.user.UUID
+    console.log("req.user.UUID es: ", uuidSearch)
 
-    console.log("hola")
-    const productos = await CarritoModel.find({});
-    console.log('productos del carrito servidor', productos)
+    const busquedaConexion = await NewcarritoModel.find({ UUID: uuidSearch })
 
-    res.render('carritoCompras')
+
+    res.json(busquedaConexion[0])
   } catch (error) {
     next(error);
   }
