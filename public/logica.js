@@ -21,9 +21,10 @@ btnCart.addEventListener('click', () => {
 // Lista de todos los contenedores de productos
 
 let allProducts = [];
-const productsList = document.querySelector('.container-items');
+const productsList = document.querySelector('.main-container');
 const spanText = document.getElementsByClassName("num")[0]
 const btnMas = document.getElementsByClassName("mas")[0]
+const totalCarrito = document.getElementsByClassName('total-carrito')[0]
 
 //! Evento para cuando se haga click dentro de un contenedor '.container-items'
 productsList.addEventListener('click', e => {
@@ -56,7 +57,10 @@ productsList.addEventListener('click', e => {
                 price: product.querySelector('p').textContent,
                 img: product.parentElement.querySelector('img').getAttribute('src'),
                 description: product.querySelector('h3').textContent,
+                code:product.querySelector('h4').textContent,
             };
+
+console.log('el valor de infoProduct es: ',infoProduct)
 
             if (infoProduct.quantity > 0) {
                 let precio = infoProduct.price
@@ -222,6 +226,57 @@ productsList.addEventListener('click', e => {
 })
 
 
+productsList.addEventListener('click', e => {
+
+
+    console.log('este es el elemtento: ',e.target)
+  
+
+    if (e.target.classList.contains('menos2')) {
+        
+        
+        const product = e.target.parentElement;
+        console.log('produdct es :',product )
+   
+        let valorSpan2 = parseInt(product.querySelector('span.num2').textContent)
+        console.log(valorSpan2)
+
+        if (valorSpan2 > 1){
+
+            valorSpan2--
+            let modificarSpan2 = product.querySelector('span.num2')
+            modificarSpan2.innerText = valorSpan2
+            
+            
+            let ContPrincipal=product.parentElement.parentElement
+
+            let subTotal= ContPrincipal.querySelector('p.precio2').textContent
+            subTotal= parseInt(subTotal.replace(/\D/g, ''))
+
+            let valorUnitario =(subTotal/(valorSpan2+1))
+            console.log('el valor unitario es', valorUnitario)
+
+            subTotal = subTotal-valorUnitario
+
+            let modificarSubTotal = ContPrincipal.querySelector('p.precio2')
+            modificarSubTotal.innerText ='$'+ subTotal
+
+            console.log('este es el subtotal: ',subTotal)
+
+            let totalARemplazar = totalCarrito.textContent
+            totalARemplazar= parseInt(totalARemplazar.replace(/\D/g, ''))
+            totalARemplazar= totalARemplazar - valorUnitario
+
+            totalCarrito.innerText = 'TOTAL = $'+totalARemplazar
+            console.log('total a remplazar es', totalARemplazar)
+
+
+
+
+
+        }
+
+}})
 
 
 

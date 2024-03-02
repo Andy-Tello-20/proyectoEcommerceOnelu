@@ -48,14 +48,24 @@ router.get('/carrito', authMiddleware('jwt'), async (req, res, next) => {
     console.log("req.user.UUID es: ", uuidSearch)
 
     const busquedaConexion = await NewcarritoModel.find({ UUID: uuidSearch })
-    console.log ('se encontro un docuento: ', busquedaConexion)
+   
 
     
     if (busquedaConexion.length === 0){
-      res.json('Carrito Vacio')
+      res.render('carritoCompras',{title: 'Despesa Onelú'})
     }else{
       const ProductosDelCarrito = busquedaConexion[0].carrito
-      res.render('carritoCompras', { listcarrito: ProductosDelCarrito.map(user => user.toJSON()), title: 'Despesa Onelú' })
+
+     
+      const pruebaArray = ProductosDelCarrito.map(i => i.price)
+
+      const suma = pruebaArray.reduce((acumulador, valorActual) => acumulador + valorActual)
+
+      console.log('los precios de la lista son', pruebaArray)
+      console.log('La sumatoria fue: ',suma)
+
+
+      res.render('carritoCompras', { listcarrito: ProductosDelCarrito.map(user => user.toJSON()),suma, title: 'Despesa Onelú' })
     }
 
     

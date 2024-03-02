@@ -1,13 +1,17 @@
+ <div class="propaganda">
+        <h1>OFERTAS ONELÚ</h1>
+    </div>
 <div class="container-items">
+	
 	{{#each listProducts}}
-	<div class="item">
+	<div class="item ">
 		<figure>
 			<img src="{{img}}" alt="{{title}}" />
 		</figure>
 		<div class="info-product">
 			<h2>{{title}}</h2>
 			<h3> {{description}}</h3>
-
+			<h4 style="display: none;">{{code}}</h4>
 			<span class="stock">Stock:{{stock}}</span>
 			<p class="price">${{price}}</p>
 

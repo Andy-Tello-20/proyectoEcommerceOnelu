@@ -115,57 +115,6 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
 
 
-// router.post('/carritoFind', async (req, res, next) => {
-//     try {
-//         const { allProducts } = req.body;
-
-
-//         let carritoCompras = {}
-
-//         allProducts.forEach(e => {
-//             carritoCompras = e
-//         });
-//         console.log('El carrito de compras es', carritoCompras)
-
-//         const newCarrito = {
-//             ...carritoCompras,
-//             userId: uuidv4(),
-//         }
-
-//         console.log('NewCarrito es:  ',newCarrito)
-
-//         let criterioDeBusqueda ={
-//             title:newCarrito.title
-//         }
-
-//         //? "Si encuentra en carrito de la DB un producto con el mismo titulo.. guardarlo en un array"
-//         const productosEncontrados = await CarritoModel.find(criterioDeBusqueda)
-
-
-
-
-//         //?Si la longitud de ese array es igual a cero.. crear nuevo producto en la DB
-//         if(productosEncontrados.length === 0){
-//             const user = await CarritoModel.create(newCarrito);
-//         }
-//         //? Sino actualizar el producto existente por el nuevo
-//         else{
-
-//             newCarrito.price=(productosEncontrados[0].price+newCarrito.price)
-//             newCarrito.quantity=(productosEncontrados[0].quantity+newCarrito.quantity)
-
-//             const update = await CarritoModel.updateOne(criterioDeBusqueda, newCarrito)
-//         }
-
-
-
-//     } catch (error) {
-//         next(error);
-//     }
-// });
-
-
-
 // router.post('/getUserByLastName', async (req, res, next) => {
 
 //   try {
