@@ -29,12 +29,12 @@ const totalCarrito = document.getElementsByClassName('total-carrito')[0]
 //! Evento para cuando se haga click dentro de un contenedor '.container-items'
 productsList.addEventListener('click', e => {
 
-     
+
 
     //? Si hago click en un dentro de productsLists (que es igual al contenedor 'container-items') sobre algo con una clase btn-add-cart...
     if (e.target.classList.contains('btn-add-cart')) {
 
-   
+
 
         //?...product será igual al contenedor que esta conteniendo al boton 'btn-add-cart', es decir al contenedor "info-products" 
         const product = e.target.parentElement;
@@ -48,54 +48,17 @@ productsList.addEventListener('click', e => {
 
         if (valorSpan > 0) {
 
-
-
-
             const infoProduct = {
-                quantity: parseInt(product.querySelector('span.num').textContent),
                 title: product.querySelector('h2').textContent,
-                price: product.querySelector('p').textContent,
-                img: product.parentElement.querySelector('img').getAttribute('src'),
-                description: product.querySelector('h3').textContent,
-                code:product.querySelector('h4').textContent,
+                quantity: parseInt(product.querySelector('span.num').textContent),
+                code: product.querySelector('h4').textContent,
             };
 
-console.log('el valor de infoProduct es: ',infoProduct)
-
-            if (infoProduct.quantity > 0) {
-                let precio = infoProduct.price
-                precio = precio.replace(/\D/g, '')
-                precio = precio * infoProduct.quantity
-
-                infoProduct.price = precio
-            }
-
-            const exits = allProducts.some(
-                product => product.title === infoProduct.title
-            );
-
-            if (exits) {
-                const products = allProducts.map(product => {
-                    if (product.title === infoProduct.title) {
-                        product.quantity = product.quantity + infoProduct.quantity;
-
-                        let precio = infoProduct.price
+            console.log('el valor de infoProduct es: ', infoProduct)
 
 
-                        let prodPrecio = product.price
+            allProducts = [...allProducts, infoProduct];
 
-
-                        product.price = (precio + prodPrecio)
-
-                        return product;
-                    } else {
-                        return product;
-                    }
-                });
-                allProducts = [...products];
-            } else {
-                allProducts = [...allProducts, infoProduct];
-            }
 
             //! envio al servidor 
             function enviarDatos() {
@@ -229,45 +192,101 @@ console.log('el valor de infoProduct es: ',infoProduct)
 productsList.addEventListener('click', e => {
 
 
-    console.log('este es el elemtento: ',e.target)
-  
+    console.log('este es el elemtento: ', e.target)
+
 
     if (e.target.classList.contains('menos2')) {
-        
-        
+
+
+
         const product = e.target.parentElement;
-        console.log('produdct es :',product )
-   
+        console.log('produdct es :', product)
+
+        let ContPrincipal = product.parentElement.parentElement
+
         let valorSpan2 = parseInt(product.querySelector('span.num2').textContent)
         console.log(valorSpan2)
 
-        if (valorSpan2 > 1){
+        if (valorSpan2 > 1) {
+
+
+            Toastify({
+                text: "Se restó una unidad",
+                duration: 2000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                },
+                onClick: function () { } // Callback after click
+            }).showToast();
+
+
+
 
             valorSpan2--
+
+
             let modificarSpan2 = product.querySelector('span.num2')
             modificarSpan2.innerText = valorSpan2
-            
-            
-            let ContPrincipal=product.parentElement.parentElement
 
-            let subTotal= ContPrincipal.querySelector('p.precio2').textContent
-            subTotal= parseInt(subTotal.replace(/\D/g, ''))
 
-            let valorUnitario =(subTotal/(valorSpan2+1))
+            const infoProduct = {
+                title: ContPrincipal.querySelector('small').textContent,
+                quantity: parseInt(product.querySelector('span.num2').textContent),
+                code: product.querySelector('h4').textContent,
+            };
+
+            console.log('el valor de infoProduct es: ', infoProduct.quantity)
+
+
+            allProducts = [infoProduct];
+
+
+            function enviarDatos() {
+                const url = '/api/tuCarrito';
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ allProducts }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Respuesta del servidor:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error al realizar la solicitud:', error);
+                    });
+            }
+
+            enviarDatos()
+
+
+            let subTotal = ContPrincipal.querySelector('p.precio2').textContent
+            subTotal = parseInt(subTotal.replace(/\D/g, ''))
+
+            let valorUnitario = (subTotal / (valorSpan2 + 1))
             console.log('el valor unitario es', valorUnitario)
 
-            subTotal = subTotal-valorUnitario
+            subTotal = subTotal - valorUnitario
 
             let modificarSubTotal = ContPrincipal.querySelector('p.precio2')
-            modificarSubTotal.innerText ='$'+ subTotal
+            modificarSubTotal.innerText = '$' + subTotal
 
-            console.log('este es el subtotal: ',subTotal)
+            console.log('este es el subtotal: ', subTotal)
 
             let totalARemplazar = totalCarrito.textContent
-            totalARemplazar= parseInt(totalARemplazar.replace(/\D/g, ''))
-            totalARemplazar= totalARemplazar - valorUnitario
+            totalARemplazar = parseInt(totalARemplazar.replace(/\D/g, ''))
+            totalARemplazar = totalARemplazar - valorUnitario
 
-            totalCarrito.innerText = 'TOTAL = $'+totalARemplazar
+            totalCarrito.innerText = 'TOTAL = $' + totalARemplazar
             console.log('total a remplazar es', totalARemplazar)
 
 
@@ -276,7 +295,111 @@ productsList.addEventListener('click', e => {
 
         }
 
-}})
+    }
+
+    if (e.target.classList.contains('mas2')) {
+
+        const product = e.target.parentElement;
+        console.log('produdct es :', product)
+
+        let ContPrincipal2 = product.parentElement.parentElement
+
+        let valorSpan2 = parseInt(product.querySelector('span.num2').textContent)
+        let status = product.querySelector('span.num2').textContent
+        console.log(valorSpan2)
+
+        let disponibles = parseInt(ContPrincipal2.querySelector('span.disponibles').textContent)
+
+        console.log(' que es disponibles: ', disponibles)
+
+        if (valorSpan2 < disponibles) {
+
+
+            valorSpan2++
+            let modificarSpan2 = product.querySelector('span.num2')
+            modificarSpan2.innerText = valorSpan2
+
+
+            const infoProduct = {
+                title: ContPrincipal2.querySelector('small').textContent,
+                quantity: parseInt(product.querySelector('span.num2').textContent),
+                code: product.querySelector('h4').textContent,
+            };
+
+            console.log('el valor de infoProduct es: ', infoProduct.quantity)
+
+
+            allProducts = [infoProduct];
+
+
+            function enviarDatos() {
+                const url = '/api/tuCarrito';
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ allProducts }),
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Respuesta del servidor:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error al realizar la solicitud:', error);
+                    });
+            }
+
+            enviarDatos()
+
+            Toastify({
+                text: "Se añadio una unidad",
+                duration: 2000,
+                destination: "https://github.com/apvarun/toastify-js",
+                newWindow: true,
+                close: true,
+                gravity: "top", // `top` or `bottom`
+                position: "right", // `left`, `center` or `right`
+                stopOnFocus: true, // Prevents dismissing of toast on hover
+                style: {
+                    background: "linear-gradient(to right, #00b09b, #96c93d)",
+                },
+                onClick: function () { } // Callback after click
+            }).showToast();
+
+
+            let ContPrincipal = product.parentElement.parentElement
+
+            let subTotal = ContPrincipal.querySelector('p.precio2').textContent
+            subTotal = parseInt(subTotal.replace(/\D/g, ''))
+
+            let valorUnitario = subTotal / (valorSpan2 - 1)
+            console.log('el valor unitario es', valorUnitario)
+
+            subTotal = subTotal + valorUnitario
+
+            let modificarSubTotal = ContPrincipal.querySelector('p.precio2')
+            modificarSubTotal.innerText = '$' + subTotal
+
+            console.log('este es el subtotal: ', subTotal)
+
+            let totalARemplazar = totalCarrito.textContent
+            totalARemplazar = parseInt(totalARemplazar.replace(/\D/g, ''))
+            totalARemplazar = totalARemplazar + valorUnitario
+
+            totalCarrito.innerText = 'TOTAL = $' + totalARemplazar
+            console.log('total a remplazar es', totalARemplazar)
+
+        }
+
+
+
+
+    }
+})
+
+
 
 
 

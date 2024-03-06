@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import NewcarritoModel from '../../models/nuevoCarrito.model.js';
-import { v4 as uuidv4 } from 'uuid'
+
 import { authMiddleware, authRolesMiddleware } from '../../utils.js'
-import { create } from 'express-handlebars';
+;
 
 const router = Router();
 
@@ -15,13 +15,13 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         //?desestructurando el carrito desde el front 
         const { allProducts } = req.body;
 
-
+        console.log('allproducts: ', allProducts)
         let carritoCompras = {}
 
         allProducts.forEach(e => {
             carritoCompras = e
         });
-        // console.log('El carrito de compras es', carritoCompras)
+        console.log('El carrito de compras es', carritoCompras)
 
         const newCarrito = {
             ...carritoCompras,
@@ -47,9 +47,22 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
 
                 // //?Si hay algun elemento/producto con titulo en la database, igual al titulo del producto que obtengo de la peticion...
-                if (i.title === newCarrito.title) {
-                    i.price = i.price + newCarrito.price;
-                    i.quantity = i.quantity + newCarrito.quantity;
+                if (i.code === newCarrito.code) {
+
+                    if(newCarrito.quantity < i.quantity){
+                        
+                        i.quantity=newCarrito.quantity
+
+                        console.log('aca newCarrito.quantity < i.quantity entonces i.quantity es: ', i.quantity)
+                    }else if(newCarrito.quantity > i.quantity){
+                        
+                        i.quantity=i.quantity+ (newCarrito.quantity-i.quantity)
+
+                        console.log('aca newCarrito.quantity > i.quantity entonces i.quantity es: ', i.quantity)
+
+                    }
+
+                    
                     console.log('i es:', i);
 
                     return i
@@ -65,7 +78,7 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
             console.log('otherArray es: ',otherArray)
             
-            let otherArray2= otherArray.some(item => item.title === newCarrito.title)
+            let otherArray2= otherArray.some(item => item.code === newCarrito.code)
 
             console.log('otherArray2 es: ',otherArray2)
             console.log('newCarrito es: ',newCarrito)
@@ -102,7 +115,7 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
 
 
-
+        res.redirect('/carrito')
 
     } catch (error) {
         next(error)
