@@ -40,11 +40,11 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         // console.log('Esto es productoDB: ', ProductosDB)
 
         // console.log('busquedaConexion es: ', busquedaConexion[0], 'y tiene elementos = a', busquedaConexion.length)
-
+        // //?Que pasaria si desde el HTML se altera la cantidad de productos, ingresando mas de lo disponible en el stock?
         const SinAlteraciones = ProductosDB.filter((item) => {
             return item.code === newCarrito.code && newCarrito.quantity > item.stock;
-          });
-        console.log('SinAlteraciones verifico que: ',SinAlteraciones)
+        });
+        console.log('SinAlteraciones verifico que: ', SinAlteraciones)
 
 
         if (busquedaConexion.length > 0) {
@@ -60,8 +60,8 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
                 if (i.code === newCarrito.code && existePropiedad) {
 
-                    if(SinAlteraciones.length > 0){
-                        
+                    if (SinAlteraciones.length > 0) {
+
                         i.quantity = SinAlteraciones[0].stock
                         console.log('que pasaria si...', i.quantity)
                         console.log('sin anteraciones en i : ', i)
@@ -69,18 +69,18 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
 
                         return i
-                    }else{
+                    } else {
                         i.quantity = i.quantity + newCarrito.quantity
 
                         console.log('I es inicio: ', i)
-    
+
                         // console.log('aca newCarrito.quantity > i.quantity entonces i.quantity es: ', i.quantity)
-    
-    
+
+
                         return i
                     }
 
-                   
+
                 }
 
 
@@ -88,8 +88,8 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
                 if (i.code === newCarrito.code && !existePropiedad) {
 
 
-                    if(SinAlteraciones.length > 0){
-                        
+                    if (SinAlteraciones.length > 0) {
+
                         i.quantity = SinAlteraciones[0].stock
                         console.log('que pasaria si...', i.quantity)
                         console.log('sin anteraciones en i : ', i)
@@ -150,32 +150,6 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
             actualizarProducto()
 
         }
-
-        // if (busquedaConexion.length > 0 && SinAlteraciones){
-
-        //     const array = busquedaConexion[0].carrito.map((i) => {
-
-        //         // //?Que pasaria si desde el HTML se altera la cantidad de productos, ingresando mas de lo disponible en el stock?
-        //         ProductosDB.map((producto) => {
-        //             if (producto.code === newCarrito.code && newCarrito.quantity > producto.stock) {
-
-        //                 i.quantity = producto.stock
-        //                 console.log('que pasaria si...', i.quantity)
-        //                 console.log('sin anteraciones en i : ', i)
-
-
-
-        //                 return i
-
-        //             }
-        //         })
-            
-
-        //     })
-
-             
-        // }
-
 
         if (busquedaConexion.length === 0) {
 
