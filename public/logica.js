@@ -11,12 +11,7 @@ cerrar.addEventListener("click", () => {
     nav.classList.remove("visible");
 })
 
-const btnCart = document.querySelector('.container-cart-icon')
-const containerCartProducts = document.querySelector('.container-cart-products')
 
-btnCart.addEventListener('click', () => {
-    containerCartProducts.classList.toggle('hidden-cart')
-})
 
 // Lista de todos los contenedores de productos
 
@@ -52,6 +47,7 @@ productsList.addEventListener('click', e => {
                 title: product.querySelector('h2').textContent,
                 quantity: parseInt(product.querySelector('span.num').textContent),
                 code: product.querySelector('h4').textContent,
+                fuenteInicio:'inicio'
             };
 
             console.log('el valor de infoProduct es: ', infoProduct)
@@ -92,7 +88,7 @@ productsList.addEventListener('click', e => {
         botonAñadir.disabled = true
         botonAñadir.classList.remove('buttonEnable')
         allProducts = []
-
+        
 
     }
     console.log(allProducts)

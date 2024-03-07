@@ -24,19 +24,32 @@
 
 .count-products {
     position: absolute;
-    top: 55%;
+    top: -35%;
+    
+    left: 54%;
     right: 0;
-
-    background-color: #000;
+    background-color: #e90e0e;
     color: #fff;
-    width: 25px;
-    height: 25px;
-
+    width: 20px;
+    height: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
 }
+
+.bi{
+    font-size: 2rem;
+}
+
+.carritoTrash{
+font-size: 1rem;
+}
+
+.simCarrito{
+    color: black;
+}
+
 
 #contador-productos {
     font-size: 12px;
@@ -121,9 +134,11 @@
 
 header {
     display: flex;
+    position: sticky;
     align-items: center;
+    top: 0;
     justify-content: space-between;
-    padding: 2rem;
+    padding: 1rem;
     background-color: #ffe950;
 }
 

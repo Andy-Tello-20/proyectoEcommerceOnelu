@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import NewcarritoModel from '../../models/nuevoCarrito.model.js';
-
+import ProductoModel from '../../models/product.models.js';
 import { authMiddleware, authRolesMiddleware } from '../../utils.js'
-;
+    ;
 
 const router = Router();
 
@@ -15,13 +15,13 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         //?desestructurando el carrito desde el front 
         const { allProducts } = req.body;
 
-        console.log('allproducts: ', allProducts)
+        // console.log('allproducts: ', allProducts)
         let carritoCompras = {}
 
         allProducts.forEach(e => {
             carritoCompras = e
         });
-        console.log('El carrito de compras es', carritoCompras)
+        // console.log('El carrito de compras es', carritoCompras)
 
         const newCarrito = {
             ...carritoCompras,
@@ -32,11 +32,19 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         // console.log('copiaNewCarrito es :', copiaNewCarrito)
 
         const uuidSearch = req.user.UUID
-        console.log("req.user.UUID es: ", uuidSearch)
+        // console.log("req.user.UUID es: ", uuidSearch)
 
         const busquedaConexion = await NewcarritoModel.find({ UUID: uuidSearch })
+        const ProductosDB = await ProductoModel.find({})
 
-        console.log('busquedaConexion es: ', busquedaConexion[0], 'y tiene elementos = a', busquedaConexion.length)
+        // console.log('Esto es productoDB: ', ProductosDB)
+
+        // console.log('busquedaConexion es: ', busquedaConexion[0], 'y tiene elementos = a', busquedaConexion.length)
+
+        const SinAlteraciones = ProductosDB.filter((item) => {
+            return item.code === newCarrito.code && newCarrito.quantity > item.stock;
+          });
+        console.log('SinAlteraciones verifico que: ',SinAlteraciones)
 
 
         if (busquedaConexion.length > 0) {
@@ -46,27 +54,70 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
             const array = busquedaConexion[0].carrito.map((i) => {
 
 
+                //? Si el elemento que intento agregar proviene de la pagina INICIO realiza lo siguiente..
+
+                const existePropiedad = Object.keys(newCarrito).some(key => key === 'fuenteInicio')
+
+                if (i.code === newCarrito.code && existePropiedad) {
+
+                    if(SinAlteraciones.length > 0){
+                        
+                        i.quantity = SinAlteraciones[0].stock
+                        console.log('que pasaria si...', i.quantity)
+                        console.log('sin anteraciones en i : ', i)
+
+
+
+                        return i
+                    }else{
+                        i.quantity = i.quantity + newCarrito.quantity
+
+                        console.log('I es inicio: ', i)
+    
+                        // console.log('aca newCarrito.quantity > i.quantity entonces i.quantity es: ', i.quantity)
+    
+    
+                        return i
+                    }
+
+                   
+                }
+
+
                 // //?Si hay algun elemento/producto con titulo en la database, igual al titulo del producto que obtengo de la peticion...
-                if (i.code === newCarrito.code) {
+                if (i.code === newCarrito.code && !existePropiedad) {
 
-                    if(newCarrito.quantity < i.quantity){
+
+                    if(SinAlteraciones.length > 0){
                         
-                        i.quantity=newCarrito.quantity
+                        i.quantity = SinAlteraciones[0].stock
+                        console.log('que pasaria si...', i.quantity)
+                        console.log('sin anteraciones en i : ', i)
 
-                        console.log('aca newCarrito.quantity < i.quantity entonces i.quantity es: ', i.quantity)
-                    }else if(newCarrito.quantity > i.quantity){
-                        
-                        i.quantity=i.quantity+ (newCarrito.quantity-i.quantity)
 
-                        console.log('aca newCarrito.quantity > i.quantity entonces i.quantity es: ', i.quantity)
+
+                        return i
+                    }
+
+
+                    if (newCarrito.quantity < i.quantity) {
+
+                        i.quantity = newCarrito.quantity
+
+                        // console.log('aca newCarrito.quantity < i.quantity entonces i.quantity es: ', i.quantity)
+                    } else if (newCarrito.quantity > i.quantity) {
+
+                        i.quantity = i.quantity + (newCarrito.quantity - i.quantity)
+
+                        // console.log('aca newCarrito.quantity > i.quantity entonces i.quantity es: ', i.quantity)
 
                     }
 
-                    
+
                     console.log('i es:', i);
 
                     return i
-                }else{
+                } else {
                     return i
                 }
             }
@@ -74,14 +125,16 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
             busquedaConexion[0].carrito = [...array]
 
-            let otherArray =  busquedaConexion[0].carrito
+            let otherArray = busquedaConexion[0].carrito
 
-            console.log('otherArray es: ',otherArray)
-            
-            let otherArray2= otherArray.some(item => item.code === newCarrito.code)
+            console.log('otherArray es: ', otherArray)
 
-            console.log('otherArray2 es: ',otherArray2)
-            console.log('newCarrito es: ',newCarrito)
+            //? A partir de esta linea los codigos sirven solo para agregar al carrito productos nuevos que no se encontraban en la base de datos, 
+
+            let otherArray2 = otherArray.some(item => item.code === newCarrito.code)
+
+            console.log('otherArray2 es: ', otherArray2)
+            // console.log('newCarrito es: ',newCarrito)
 
             if (!otherArray2) {
                 otherArray.push(newCarrito);
@@ -97,6 +150,31 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
             actualizarProducto()
 
         }
+
+        // if (busquedaConexion.length > 0 && SinAlteraciones){
+
+        //     const array = busquedaConexion[0].carrito.map((i) => {
+
+        //         // //?Que pasaria si desde el HTML se altera la cantidad de productos, ingresando mas de lo disponible en el stock?
+        //         ProductosDB.map((producto) => {
+        //             if (producto.code === newCarrito.code && newCarrito.quantity > producto.stock) {
+
+        //                 i.quantity = producto.stock
+        //                 console.log('que pasaria si...', i.quantity)
+        //                 console.log('sin anteraciones en i : ', i)
+
+
+
+        //                 return i
+
+        //             }
+        //         })
+            
+
+        //     })
+
+             
+        // }
 
 
         if (busquedaConexion.length === 0) {
@@ -124,7 +202,10 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
 })
 
+router.post('cargarCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
+
+})
 
 
 
