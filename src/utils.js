@@ -30,7 +30,7 @@ export const generateToken = (uuid) => {
   const payload = {
     UUID: uuid
   };
-  return JWT.sign(payload, JWT_SECRET, { expiresIn: '10m' });
+  return JWT.sign(payload, JWT_SECRET, { expiresIn: '30m' });
 };
 
 
@@ -48,7 +48,7 @@ export const authMiddleware = (strategy) => (req, res, next) => {
 
       const UUID = uuidv4()
       const token = generateToken(UUID);
-      const minutosCoekie = 10
+      const minutosCoekie = 30
 
 
       res.cookie('token', token, {
