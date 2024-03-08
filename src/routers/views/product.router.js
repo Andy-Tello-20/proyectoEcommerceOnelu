@@ -147,8 +147,9 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
                 await busquedaConexion[0].save()
             }
 
-            actualizarProducto()
+            await actualizarProducto()
 
+            res.status(200);
         }
 
         if (busquedaConexion.length === 0) {
@@ -166,7 +167,7 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         }
 
 
-        res.status(200).redirect('/inicio ');
+        
    
 
     } catch (error) {

@@ -222,10 +222,12 @@ productsListCarrito.addEventListener('click', e => {
       
         ProdDelete =[infoDelete]
 
-        function enviarDatos() {
+        
+
+       const enviarDatos= async () => {
             const url = '/api/deleteProduct';
 
-            fetch(url, {
+           await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -234,12 +236,25 @@ productsListCarrito.addEventListener('click', e => {
             }).then(response => {
                 // Verificar si la respuesta indica una redirección
                 if (response.redirected) {
-
-                    
-                    // Realizar la redirección manualmente
+                  // Crear el Toast
+                  const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    backdrop: false,
+                  });
+                  // Mostrar el Toast
+                  Toast.fire({
+                    icon: "success",
+                    title: "Eliminando Producto!"
+                  }).then(() => {
+                    // Después de que el toast se cierre, realizar la redirección manualmente
                     window.location.href = response.url;
+                  });
                 }
-            })
+              })
             .catch(error => {
                 console.error('Error al enviar datos:', error);
             });

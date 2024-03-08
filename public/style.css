@@ -28,7 +28,7 @@
     
     left: 54%;
     right: 0;
-    background-color: #e90e0e;
+    background-color: #020202;
     color: #fff;
     width: 20px;
     height: 20px;
@@ -139,7 +139,7 @@ header {
     top: 0;
     justify-content: space-between;
     padding: 1rem;
-    background-color: #ffe950;
+    background-color: #fc2626;
 }
 
 .logo {
@@ -154,7 +154,8 @@ header {
 
 .nav-list li a {
     text-decoration: none;
-    color: #1c1c1c;
+    color: #ffffff;
+    font-weight: 600;
 }
 
 .abrir-menu,
@@ -415,7 +416,7 @@ h2 {
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .carrito-productos {
@@ -489,4 +490,32 @@ h2 {
 .menos2, .mas2{
     width: 50px;
     cursor: pointer
+}
+
+
+.continuar-compra{
+    display: flex;
+    justify-content: center;
+}
+.confirmar-carrito{
+    background: #080707;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    width: 250px;
+    border-radius: 15px;
+    height: 45px;
+
+}
+
+
+
+
+
+/* estilos footer */
+
+footer{
+    height: 75px;
+    background: #fc2626;
+
 }
