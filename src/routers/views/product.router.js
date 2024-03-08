@@ -15,7 +15,7 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         //?desestructurando el carrito desde el front 
         const { allProducts } = req.body;
 
-        // console.log('allproducts: ', allProducts)
+        console.log('allproducts: ', allProducts)
         let carritoCompras = {}
 
         allProducts.forEach(e => {
@@ -166,8 +166,8 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         }
 
 
-
-        res.redirect('/carrito')
+        res.status(200).redirect('/inicio');
+   
 
     } catch (error) {
         next(error)
@@ -176,7 +176,66 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
 })
 
-router.post('cargarCarrito', authMiddleware('jwt'), async (req, res, next) => {
+
+
+router.post('/deleteProduct', authMiddleware('jwt'), async (req, res, next) => {
+
+    try {
+
+        //?desestructurando el carrito desde el front 
+        const { ProdDelete } = req.body;
+
+        console.log('ProdDelete: ', ProdDelete)
+        let codigoABorrar = {}
+
+        ProdDelete.forEach(e => {
+            codigoABorrar = e
+        });
+
+
+        console.log('el codigo a borrar es: ', codigoABorrar)
+
+
+        const uuidSearch = req.user.UUID
+        // console.log("req.user.UUID es: ", uuidSearch)
+
+        const busquedaConexion = await NewcarritoModel.find({ UUID: uuidSearch })
+        //  const ProductosDB = await ProductoModel.find({codigoABorrar})
+
+        console.log('busquedaConexion es: ', busquedaConexion)
+
+        //  .deleteOne({ tuCampo: valor })
+        if (busquedaConexion.length > 0) {
+
+
+            let indice = busquedaConexion[0].carrito.findIndex(item => {
+                return item.code == codigoABorrar.code
+            })
+
+
+            busquedaConexion[0].carrito.splice(indice, 1)
+
+            console.log('Ahora el carrito de compras es: ', busquedaConexion[0].carrito)
+
+
+            const actualizarProducto = async () => {
+                console.log('busquedaConexion[0].carrito es:', busquedaConexion[0].carrito)
+                await busquedaConexion[0].save()
+            }
+
+           await  actualizarProducto()
+
+            
+
+        }
+
+        res.status(200).redirect('/carrito')
+        
+
+    } catch (error) {
+        next(error)
+    }
+
 
 
 })

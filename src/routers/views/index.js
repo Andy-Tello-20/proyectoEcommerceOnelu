@@ -17,21 +17,24 @@ router.get('/inicio', authMiddleware('jwt'), async (req, res) => {
     const users = await ProductoModel.find({});
 
     const uuidSearch = req.user.UUID
-    
+
 
     const busquedaEnCarrito = await NewcarritoModel.find({ UUID: uuidSearch })
-
+    console.log('que trae busquedaEnCarrito?: ', busquedaEnCarrito)
 
     let suma = 0
 
-    if (busquedaEnCarrito.length > 0) {
+    // console.log ('esun empty carrito?: ', busquedaEnCarrito[0].carrito)
+
+    if (busquedaEnCarrito.length > 0 ) {
+
       const pruebaArray = busquedaEnCarrito[0].carrito.map(i => i.quantity)
 
 
 
-       suma = pruebaArray.reduce((acumulador, valorActual) => acumulador + valorActual)
+      suma = pruebaArray.reduce((acumulador, valorActual) => { acumulador + valorActual }, 0)
 
-
+      console.log(' que es suma en inicio?:', suma)
 
     }
 
@@ -49,23 +52,24 @@ router.get('/inicio', authMiddleware('jwt'), async (req, res) => {
 router.get('/carrito', authMiddleware('jwt'), async (req, res, next) => {
   try {
     const uuidSearch = req.user.UUID
-   
+
 
     const busquedaEnCarrito = await NewcarritoModel.find({ UUID: uuidSearch })
     const listaProductos = await ProductoModel.find({})
 
 
+    let suma = 0
+    let cambios = []
+    let sumaPrecios = ''
 
     if (busquedaEnCarrito.length === 0) {
 
       res.render('carritoCompras', { title: 'Despesa Onelú' })
 
-    } else {
+    } else if (busquedaEnCarrito.length > 0 && busquedaEnCarrito[0].carrito.length > 0) {
 
 
       const ProductosDelCarrito = busquedaEnCarrito[0].carrito
-
-      let cambios = []
 
 
       const alteracionPrecios = listaProductos.map((i) => {
@@ -102,42 +106,24 @@ router.get('/carrito', authMiddleware('jwt'), async (req, res, next) => {
 
       })
 
-      // let arr1 = cambios[0]
-      // let arr2 =cantReal[0]
-
-      // let sumArrs={...arr1, ...arr2}
-
-      // console.log('sumArrs es: ',sumArrs)
-
-
-      // console.log('Esta es la lista de productos con los precios segun las cantidades en el carrito: ', cambios)
-
-
-
-
 
       const preciosParciales = cambios.map(i => i.price)
 
-      const sumaPrecios = preciosParciales.reduce((acumulador, valorActual) => acumulador + valorActual)
+      sumaPrecios = preciosParciales.reduce((acumulador, valorActual) => acumulador + valorActual)
 
-      const stockParciales =cambios.map(i => i.stock)
-
-
-
-      const suma = stockParciales.reduce((acumulador, valorActual) => acumulador + valorActual)
+      const stockParciales = cambios.map(i => i.stock)
 
 
 
+      suma = stockParciales.reduce((acumulador, valorActual) => acumulador + valorActual)
 
 
-      // console.log('los precios de la lista son', preciosParciales)
-      // console.log('La sumatoria fue: ', suma)
 
 
-      res.render('carritoCompras', { listcarrito: cambios.map(user => user.toJSON()),sumaPrecios, suma, title: 'Carrito Onelú' })
 
     }
 
+    res.render('carritoCompras', { listcarrito: cambios.map(user => user.toJSON()), sumaPrecios, suma, title: 'Carrito Onelú' })
 
   } catch (error) {
     next(error);
