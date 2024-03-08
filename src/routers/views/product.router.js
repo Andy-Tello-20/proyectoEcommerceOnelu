@@ -166,7 +166,7 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         }
 
 
-        res.status(200).redirect('/inicio');
+        res.status(200).redirect('/inicio ');
    
 
     } catch (error) {
