@@ -1,8 +1,9 @@
 import { Router } from 'express';
 import NewcarritoModel from '../../models/nuevoCarrito.model.js';
 import ProductoModel from '../../models/product.models.js';
-import { authMiddleware, authRolesMiddleware } from '../../utils.js'
-    ;
+import { authMiddleware, checkCartNotEmptyMiddleware } from '../../utils.js'
+import { calcularDistancia } from '../../productManager/calculadoraDistancia.js'
+
 
 const router = Router();
 
@@ -149,7 +150,7 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
             await actualizarProducto()
 
-            res.status(200);
+            res.status(200).send('Operación exitosa');
         }
 
         if (busquedaConexion.length === 0) {
@@ -167,8 +168,8 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
         }
 
 
-        
-   
+
+
 
     } catch (error) {
         next(error)
@@ -224,14 +225,14 @@ router.post('/deleteProduct', authMiddleware('jwt'), async (req, res, next) => {
                 await busquedaConexion[0].save()
             }
 
-           await  actualizarProducto()
+            await actualizarProducto()
 
-            
+
 
         }
 
         res.status(200).redirect('/carrito')
-        
+
 
     } catch (error) {
         next(error)
@@ -241,5 +242,167 @@ router.post('/deleteProduct', authMiddleware('jwt'), async (req, res, next) => {
 
 })
 
+
+
+router.post('/infoCliente', authMiddleware('jwt'), async (req, res, next) => {
+
+
+
+    try {
+
+        const uuidSearch = req.user.UUID
+        const busquedaConexion = await NewcarritoModel.find({ UUID: uuidSearch })
+        console.log('busquedaConexion es: ', busquedaConexion)
+
+
+        const { body } = req
+
+        console.log(body)
+
+
+
+
+        if (busquedaConexion[0].datosCliente.length == 0) {
+
+            //? se ingresa los datos del cliente al array "datosCliente"
+
+            let ingresarDatos = busquedaConexion[0].datosCliente.push(body)
+
+            console.log('datos clientes es: ', busquedaConexion[0].datosCliente)
+
+
+
+            let calle = busquedaConexion[0].datosCliente[0].direccion
+            let numero = busquedaConexion[0].datosCliente[0].numeracion
+            numero = numero.toString()
+
+
+            let distancia = await calcularDistancia(calle, numero);
+            distancia = parseFloat(distancia.toFixed(2))
+
+            function calcularCostoEnvio(distancia) {
+                const intervalosCostoEnvio = [
+                    { limiteSuperior: 0.4, costo: 200 },
+                    { limiteSuperior: 1, costo: 300 },
+                    { limiteSuperior: 1.3, costo: 400 },
+                    { limiteSuperior: 1.5, costo: 500 },
+                    { limiteSuperior: Infinity, costo: 600 }
+                ];
+
+                for (const intervalo of intervalosCostoEnvio) {
+                    if (distancia < intervalo.limiteSuperior) {
+                        return intervalo.costo;
+                    }
+                }
+
+                return null; // o algún valor por defecto si la distancia no cae en ningún intervalo conocido
+            }
+
+            const costoEnvio = calcularCostoEnvio(distancia);
+            console.log('El costo de envío es:', costoEnvio);
+
+            let ingresarCostoEnvio = busquedaConexion[0].montoTotal.push({ envio: costoEnvio })
+
+
+            console.log('datos el envio son: ', ingresarCostoEnvio)
+
+        }
+
+
+
+
+
+
+        const actualizarProducto = async () => {
+            console.log('busquedaConexion[0].carrito es:', busquedaConexion[0].carrito)
+            await busquedaConexion[0].save()
+        }
+
+        await actualizarProducto()
+
+
+
+        res.status(200).redirect('/resumenYEnvio')
+    } catch (error) {
+        next(error)
+    }
+
+
+
+
+
+})
+
+router.post('/resumen', authMiddleware('jwt'), async (req, res, next) => {
+
+    try {
+
+        const uuidSearch = req.user.UUID
+        const busquedaConexion = await NewcarritoModel.find({ UUID: uuidSearch })
+        console.log('busquedaConexion es desde "/resumen": ', busquedaConexion)
+        const { body } = req
+
+        console.log('Destino:', body.metodoEnvio)
+
+        if (busquedaConexion[0].datosCliente.length > 0 && body.metodoEnvio == 'domicilio') {
+
+            console.log(' se cumplio ')
+            let calle = busquedaConexion[0].datosCliente[0].direccion
+            let numero = busquedaConexion[0].datosCliente[0].numeracion
+            numero = numero.toString()
+
+
+            let distancia = await calcularDistancia(calle, numero);
+            distancia = parseFloat(distancia.toFixed(2))
+
+
+
+            // console.log('de que tipo es distancia:',typeof (distancia))
+            // console.log('La distancia calculada es:', distancia);
+
+
+
+
+
+        }
+
+
+        res.redirect('/resumenYEnvio')
+
+    } catch (error) {
+
+    }
+
+
+
+})
+
+
+
+//     try {
+//         const { nombre, direccion, otrosDatos } = req.body; // Datos del formulario del cliente
+//         const UUID = obtenerUUID(req); // Función para obtener el UUID del cliente
+
+//         // Recuperar el carrito asociado al cliente
+//         const carrito = await NuevoCarrito.findOne({ UUID });
+
+//         if (carrito) {
+//             // Asociar los datos del cliente con el carrito
+//             carrito.datosCliente = { nombre, direccion, ...otrosDatos };
+
+//             // Guardar el carrito actualizado en la base de datos
+//             await carrito.save();
+
+//             // Realizar otras acciones relacionadas con la finalización del pedido si es necesario
+
+//             res.redirect('/pagina-de-confirmacion'); // Redirigir a la página de confirmación
+//         } else {
+//             // Manejar caso donde no se encuentra el carrito asociado al cliente
+//             res.status(404).send('Carrito no encontrado');
+//         }
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 export default router;

@@ -1,0 +1,69 @@
+<div class="contenedor-datos-cliente">
+  <div class="formulario-cliente">
+
+
+    <form action='/api/infoCliente' method="post">
+
+      <div class="contenedor-nombres">
+        <p>
+          <label for="nombre">Nombre:</label><span> <input class="controls" type="text" id="nombre" name="nombre"
+              required></span>
+        </p>
+
+        <p><label for="apellido">Apellido:</label><span> <input class="controls" type="text" id="apellido"
+              name="apellido" required></span></p>
+      </div>
+
+      <label for="documento">DNI:</label>
+      <input class="controls" type="number" id="documento" name="documento" required>
+
+      <!-- Campo de Teléfono -->
+      <label for="telefono">Celular:</label>
+      <input class="controls" type="number" id="telefono" name="telefono" placeholder="3548112233" required>
+
+
+
+
+    
+
+
+
+      <div class="contenedor-direccion">
+
+        <div class="localidad-pais">
+          <label for="billing_country" class="">País / Región&nbsp;<abbr class="required"
+              title="requerido">*</abbr></label>
+
+          <span><strong>Argentina</strong><input type="hidden"  autocomplete="country"
+              readonly="readonly"></span>
+
+          <hr>
+          <label for="billing_country" class="">Localidad&nbsp;<abbr class=title="requerido">*</abbr></label>
+
+          <span><strong>La Falda</strong><input type="hidden" name="billing_country" value="AR" autocomplete="country"
+              readonly="readonly"></span>
+          <hr>
+        </div>
+
+        <div class="datos-distino">
+          <p class="p-direccion"><label for="direccion">Dirección:</label><span><input class="controls-direccion"
+                type="text" id="direccion" name="direccion" required ></span></p>
+
+          <p class="p-numeracion"><label for="numeracion">Altura:</label><span><input class="controls-direccion"
+                type="number" name="numeracion" id="numeracion" required ></span></p>
+
+
+        </div>
+
+      </div>
+
+      <button class="btn-realizar-pedido" type="submit">Confirmar</button>
+
+    </form>
+
+
+</div>
+
+<script src="/logic.formulario.js"></script>
+
+

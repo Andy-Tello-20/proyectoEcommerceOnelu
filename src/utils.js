@@ -4,7 +4,7 @@ import JWT from 'jsonwebtoken'
 import bcrypt from 'bcrypt';
 import passport from 'passport';
 import { v4 as uuidv4 } from 'uuid'
-
+import NewcarritoModel from './models/nuevoCarrito.model.js'
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -73,15 +73,42 @@ export const authMiddleware = (strategy) => (req, res, next) => {
 
 //?MIDDLEWARE DE ROL
 
-export const authRolesMiddleware = (role) => (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({ message: 'Desautorizado' });
-  }
-  const { role: userRole } = req.user;
+// export const authRolesMiddleware = (role) => (req, res, next) => {
+//   if (!req.user) {
+//     return res.status(401).json({ message: 'Desautorizado' });
+//   }
+//   const { role: userRole } = req.user;
 
-  if (userRole !== role) {
+//   if (userRole !== role) {
 
-    return res.status(403).render('noPermission');
+//     return res.status(403).render('noPermission');
+//   }
+//   next();
+// };
+
+
+//?MIDDLEWARE DE EXISTENCIA DE ARTICULOS EN EL CARRITO  
+
+export const checkCartNotEmptyMiddleware = async (req, res, next) => {
+  try {
+    const uuidSearch = req.user.UUID
+    const chekCarrito = await NewcarritoModel.find({ UUID: uuidSearch })
+    // console.log('chekCarrito es: ', chekCarrito)
+
+    if (chekCarrito.length > 0) {
+      
+      if (chekCarrito[0].carrito.length === 0) {
+      
+        req.carritoEmpty= false
+      }else{
+        req.carritoEmpty= true
+      }}
+  } catch (error) {
+
+    console.error('Error en checkCartNotEmptyMiddleware:', error);
+    return res.status(500).send('Error interno del servidor');
   }
-  next();
+
+  next()
+  
 };

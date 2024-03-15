@@ -23,7 +23,7 @@ export const init = () => {
   };
   passport.use('jwt', new JWTStrategy(jwtOptions, (payload, done) => {
 
-    console.log('el payload de la estrategia jwt es: ' ,payload)
+    // console.log('el payload de la estrategia jwt es: ' ,payload)
     return done(null, payload);
   }));
 }

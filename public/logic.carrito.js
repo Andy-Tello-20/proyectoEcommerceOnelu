@@ -241,7 +241,7 @@ productsListCarrito.addEventListener('click', e => {
                     toast: true,
                     position: "top-end",
                     showConfirmButton: false,
-                    timer: 1500,
+                    timer: 700,
                     timerProgressBar: true,
                     backdrop: false,
                   });

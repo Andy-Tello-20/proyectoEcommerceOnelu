@@ -1,0 +1,79 @@
+<div class="agregar-Envio">
+
+
+    <div class="eleccion">
+        <h1>Tu envio a menos de un boleto de colectivo 🏍️💨</h1>
+        <ul id="shipping_method" class="woocommerce-shipping-methods">
+
+            <li>
+
+                <div>
+                    <input type="radio" class="input-radio" id="envio_domicilio" name="shipping_method[0]"
+                        data-index="0" value="domicilio">
+                    <label for="envio_domicilio">Envío a domicilio
+                        <span><bdi><span class="woocommerce-Price-currencySymbol">
+                    </label>
+                </div>
+
+
+                <p class="precio-Envio">${{valorEnvio}}</p>
+            </li>
+            <hr>
+
+            <li>
+                <input type="radio" id="retiro_local" class="input-radio" name="shipping_method[0]" data-index="0"
+                    value="local">
+                <label for="retiro_local">Retiro en el local</label>
+
+
+            </li>
+
+
+        </ul>
+
+        <button class="btn-continuar" type="submit">Continuar</button>
+
+    </div>
+
+
+
+
+
+    <div class="total-a-pagar">
+
+        <table>
+
+            <tr>
+                <th>Resumen de compra</th>
+            </tr>
+            <tr class="cart-subtotal">
+                <th>Subtotal</th>
+                <td><span class="woocommerce-Price-amount amount"><bdi><span
+                                class="woocommerce-Price-currencySymbol">$</span>00,000.00</bdi></span></td>
+            </tr>
+            <!-- Línea Horizontal -->
+            <tr>
+                <td colspan="2">
+                    <hr>
+                </td>
+            </tr>
+
+
+
+            <tr class="order-total">
+                <th>Total</th>
+                <td><strong><span class="woocommerce-Price-amount amount"><bdi><span
+                                    class="woocommerce-Price-currencySymbol">$</span>00,00.00</bdi></span></strong>
+                </td>
+            </tr>
+
+
+
+        </table>
+
+
+
+    </div>
+</div>
+
+<script src="/logic.envio.js"></script>
