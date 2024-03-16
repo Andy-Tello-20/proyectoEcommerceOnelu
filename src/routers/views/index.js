@@ -162,12 +162,15 @@ router.get('/resumenYEnvio',authMiddleware('jwt'),checkCartNotEmptyMiddleware, a
     const busquedaEnCarrito = await NewcarritoModel.find({ UUID: uuidSearch })
 
     let valorEnvio = busquedaEnCarrito[0].montoTotal[0].envio
+    let valorSubTotal = busquedaEnCarrito[0].montoTotal[0].subTotal
     
+    // console.log('valor envio en ruta resumen:',valorEnvio)
 
-    console.log('valor envio en ruta resumen:',valorEnvio)
+    let direccionEnvio = `${busquedaEnCarrito[0].datosCliente[0].direccion} ${busquedaEnCarrito[0].datosCliente[0].numeracion}`
 
+    // console.log (' direccion envio: ', direccionEnvio)
 
-    res.status(200).render('totalAPagar',{valorEnvio});
+    res.status(200).render('totalAPagar',{valorEnvio,direccionEnvio,valorSubTotal});
 
   }else{
     res.status(403).render('VolverAInicio');

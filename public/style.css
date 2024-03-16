@@ -771,6 +771,20 @@ table th{
     color: green;
 }
 
+.contenedor-li-envio{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 30%;
+}
+
+.direccion-envio{
+    text-align: left;
+    font-size: 1.1rem;
+    margin-left: 3rem;
+    font-weight: 600;
+}
+
 .btn-continuar{
     margin-top: 2rem;
     border: none;

@@ -5,19 +5,23 @@
         <h1>Tu envio a menos de un boleto de colectivo 🏍️💨</h1>
         <ul id="shipping_method" class="woocommerce-shipping-methods">
 
-            <li>
+            <div class="contenedor-li-envio">
+                <li>
 
-                <div>
-                    <input type="radio" class="input-radio" id="envio_domicilio" name="shipping_method[0]"
-                        data-index="0" value="domicilio">
-                    <label for="envio_domicilio">Envío a domicilio
-                        <span><bdi><span class="woocommerce-Price-currencySymbol">
-                    </label>
-                </div>
+                    <div>
+                        <input type="radio" class="input-radio" id="envio_domicilio" name="shipping_method[0]"
+                            data-index="0" value="domicilio">
+                        <label for="envio_domicilio">Envío a domicilio
+                            <span><bdi><span class="woocommerce-Price-currencySymbol">
+                        </label>
+                    </div>
 
 
-                <p class="precio-Envio">${{valorEnvio}}</p>
-            </li>
+                    <p class="precio-Envio">${{valorEnvio}}</p>
+                </li>
+                <p class="direccion-envio">{{direccionEnvio}}</p>
+            </div>
+
             <hr>
 
             <li>
@@ -49,7 +53,7 @@
             <tr class="cart-subtotal">
                 <th>Subtotal</th>
                 <td><span class="woocommerce-Price-amount amount"><bdi><span
-                                class="woocommerce-Price-currencySymbol">$</span>00,000.00</bdi></span></td>
+                                class="woocommerce-Price-currencySymbol">$</span>{{valorSubTotal}}</bdi></span></td>
             </tr>
             <!-- Línea Horizontal -->
             <tr>

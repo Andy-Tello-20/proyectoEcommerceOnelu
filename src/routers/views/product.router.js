@@ -3,7 +3,8 @@ import NewcarritoModel from '../../models/nuevoCarrito.model.js';
 import ProductoModel from '../../models/product.models.js';
 import { authMiddleware, checkCartNotEmptyMiddleware } from '../../utils.js'
 import { calcularDistancia } from '../../productManager/calculadoraDistancia.js'
-
+import { sumadorPreciosCarrito } from '../../producManagerDB/managerDB.js';
+import { calcularCostoEnvio } from '../../productManager/calculadoraPrecioEnvio.js';
 
 const router = Router();
 
@@ -142,6 +143,7 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
                 busquedaConexion[0].carrito = [...otherArray]
             }
 
+            //?Guardando cambios en el carrito de la base de datos 
 
             const actualizarProducto = async () => {
                 console.log('busquedaConexion[0].carrito es:', busquedaConexion[0].carrito)
@@ -150,10 +152,33 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
 
             await actualizarProducto()
 
+            // //? Añadiendo suma total al producto
+
+            let precioParcial = await sumadorPreciosCarrito(uuidSearch)
+            console.log('El precio parcial en el router carrito es:', precioParcial)
+
+            let ingresarCostoEnvio = busquedaConexion[0].montoTotal
+
+            if (busquedaConexion[0].montoTotal.length == 0) {
+                ingresarCostoEnvio.push({ subTotal: precioParcial }, { envio: 0 }, { total: 0 })
+            } else {
+                ingresarCostoEnvio[0].subTotal = precioParcial
+            }
+
+
+
+            await actualizarProducto()
+
+
             res.status(200).send('Operación exitosa');
         }
 
         if (busquedaConexion.length === 0) {
+
+            let subT = ProductosDB.find(i => i.code == newCarrito.code)
+
+            console.log('subt es:', subT)
+
 
             //? Si no existe un UUID en la data Base igual a UUID de req.user...creo uno nuevo
 
@@ -161,9 +186,23 @@ router.post('/tuCarrito', authMiddleware('jwt'), async (req, res, next) => {
                 UUID: uuidSearch,
                 carrito: [
                     newCarrito
+                ],
+                montoTotal: [
+                    {
+                        subTotal: 0,
+                        envio: 0,
+                        total: 0
+                    }
                 ]
+
             }
             const nuevoIngreso = await NewcarritoModel.create(CarroNuevo)
+
+            let precioParcial = await sumadorPreciosCarrito(uuidSearch)
+            console.log('El precio parcial en el router carrito es productoNuevo:', precioParcial)
+
+
+
 
         }
 
@@ -280,28 +319,12 @@ router.post('/infoCliente', authMiddleware('jwt'), async (req, res, next) => {
             let distancia = await calcularDistancia(calle, numero);
             distancia = parseFloat(distancia.toFixed(2))
 
-            function calcularCostoEnvio(distancia) {
-                const intervalosCostoEnvio = [
-                    { limiteSuperior: 0.4, costo: 200 },
-                    { limiteSuperior: 1, costo: 300 },
-                    { limiteSuperior: 1.3, costo: 400 },
-                    { limiteSuperior: 1.5, costo: 500 },
-                    { limiteSuperior: Infinity, costo: 600 }
-                ];
 
-                for (const intervalo of intervalosCostoEnvio) {
-                    if (distancia < intervalo.limiteSuperior) {
-                        return intervalo.costo;
-                    }
-                }
-
-                return null; // o algún valor por defecto si la distancia no cae en ningún intervalo conocido
-            }
 
             const costoEnvio = calcularCostoEnvio(distancia);
             console.log('El costo de envío es:', costoEnvio);
 
-            let ingresarCostoEnvio = busquedaConexion[0].montoTotal.push({ envio: costoEnvio })
+            let ingresarCostoEnvio = busquedaConexion[0].montoTotal[0].envio = costoEnvio
 
 
             console.log('datos el envio son: ', ingresarCostoEnvio)
@@ -314,7 +337,7 @@ router.post('/infoCliente', authMiddleware('jwt'), async (req, res, next) => {
 
 
         const actualizarProducto = async () => {
-            console.log('busquedaConexion[0].carrito es:', busquedaConexion[0].carrito)
+
             await busquedaConexion[0].save()
         }
 
